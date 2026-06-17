@@ -1,11 +1,23 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/navaneethanarayanan/test--1.git'
             }
         }
+
+        stage('Debug') {
+            steps {
+                sh '''
+                pwd
+                ls -la
+                cat index.html
+                '''
+            }
+        }
+
         stage('Publish HTML') {
             steps {
                 publishHTML([
