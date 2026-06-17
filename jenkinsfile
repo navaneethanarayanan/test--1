@@ -2,19 +2,10 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/navaneethanarayanan/test--1.git'
-            }
-        }
-
-        stage('Debug') {
-            steps {
-                sh '''
-                pwd
-                ls -la
-                cat index.html
-                '''
             }
         }
 
@@ -25,9 +16,15 @@ pipeline {
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: '.',
-                    reportFiles: 'index.html',
+                    reportFiles: 'hello.html',
                     reportName: 'My Website'
                 ])
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'hello.html'
             }
         }
     }
