@@ -3,13 +3,19 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/navaneethanarayanan/new-web.git'
+                git url: 'https://github.com/navaneethanarayanan/test--1.git'
             }
         }
-        stage('Deploy') {
+        stage('Publish HTML') {
             steps {
-                echo 'Deploying hello.html...'
-                // add your actual deployment steps here
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: '.',
+                    reportFiles: 'index.html',
+                    reportName: 'My Website'
+                ])
             }
         }
     }
