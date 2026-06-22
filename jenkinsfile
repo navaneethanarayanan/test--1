@@ -9,6 +9,13 @@ pipeline {
             }
         }
 
+        stage('tests') {
+             steps{
+                sh'echo Running tests...'
+                sh 'cat codechanges.txt'
+            }
+        }
+
         stage('Publish HTML') {
             steps {
                 publishHTML([
