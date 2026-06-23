@@ -11,34 +11,43 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'echo Building the project...'
-                sh 'ls -la'
+                sh '''
+                    echo "Building website..."
+
+                    mkdir -p build
+
+                    cp hello.html build/
+
+                    echo "Build completed"
+
+                    ls -la build
+                '''
             }
         }
-
-        stage('Build') {
-             steps {
-                 sh 'npm install'
-                 sh 'npm run build'
-            }
-        }
-
- 
 
         stage('Backup') {
             steps {
                 sh '''
                     echo "Creating backup..."
+
                     mkdir -p backup
+
                     cp hello.html backup/hello_$(date +%Y%m%d_%H%M%S).html
+
                     ls -la backup
                 '''
             }
         }
 
-        stage('Tests') {
+        stage('Test') {
             steps {
-                sh 'echo Running tests...'
+                sh '''
+                    echo "Running tests..."
+
+                    test -f hello.html
+
+                    echo "Test Passed: hello.html exists"
+                '''
             }
         }
 
@@ -57,9 +66,23 @@ pipeline {
 
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: 'hello.html'
-                archiveArtifacts artifacts: 'backup/*'
+                archiveArtifacts artifacts: 'build/**', fingerprint: true
+                archiveArtifacts artifacts: 'backup/**', fingerprint: true
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
+        }
+
+        always {
+            echo 'Pipeline execution finished.'
         }
     }
 }
