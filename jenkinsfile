@@ -9,17 +9,27 @@ pipeline {
             }
         }
 
-         stage('Build') {
+        stage('Build') {
             steps {
                 sh 'echo Building the project...'
                 sh 'ls -la'
             }
         }
 
-        stage('tests') {
-             steps{
-                sh'echo Running tests...'
-                
+        stage('Backup') {
+            steps {
+                sh '''
+                    echo "Creating backup..."
+                    mkdir -p backup
+                    cp hello.html backup/hello_$(date +%Y%m%d_%H%M%S).html
+                    ls -la backup
+                '''
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh 'echo Running tests...'
             }
         }
 
@@ -39,6 +49,7 @@ pipeline {
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: 'hello.html'
+                archiveArtifacts artifacts: 'backup/*'
             }
         }
     }
