@@ -1,88 +1,11 @@
-pipeline {
-    agent any
 
-    stages {
+if [ ! -f build.txt ]
+then
+    echo "1" > build.txt
+else
+    build=$(cat build.txt)
+    build=$((build + 1))
+    echo $build > build.txt
+fi
 
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/navaneethanarayanan/test--1.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh '''
-                    echo "Building website..."
-
-                    mkdir -p build
-
-                    cp hello.html build/
-
-                    echo "Build completed"
-
-                    ls -la build
-                '''
-            }
-        }
-
-        stage('Backup') {
-            steps {
-                sh '''
-                    echo "Creating backup..."
-
-                    mkdir -p backup
-
-                    cp hello.html backup/hello_$(date +%Y%m%d_%H%M%S).html
-
-                    ls -la backup
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    echo "Running tests..."
-
-                    test -f hello.html
-
-                    echo "Test Passed: hello.html exists"
-                '''
-            }
-        }
-
-        stage('Publish HTML') {
-            steps {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: '.',
-                    reportFiles: 'hello.html',
-                    reportName: 'My Website'
-                ])
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
-                archiveArtifacts artifacts: 'backup/**', fingerprint: true
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-
-        failure {
-            echo 'Pipeline failed!'
-        }
-
-        always {
-            echo 'Pipeline execution finished.'
-        }
-    }
-}
+echo "Current Build Number: $(cat build.txt)"
